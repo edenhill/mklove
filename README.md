@@ -27,7 +27,7 @@ Why mklove and not autoconf/automake
    Why? Because it's hard to debug and it's trivial to write proper targets
    manually. (mklove provides optional standard targets for common operations).
  * The generated makefiles (et.al) from autoconf are usually larger than the
-   sum of all source code for smaller projects. This is ridicolous.
+   sum of all source code for smaller projects. This is ridiculous.
  * autoconf is declarative, mklove is imperative, this allows fine grained
    and natural control flow that follows your line of thought.
  * I dont want to spend my time watching configure test for things that
@@ -49,7 +49,7 @@ Base design requirements for mklove
  * **Dont stop on each error**; run as many checks as possible then present me
    the fatal failures when done
  * Suggest to me what packages to install to fix a failure.
- * Be plug-in compatible with the beast.
+ * Be drop-in compatible with the beast.
 
 Hip features
 ------------
@@ -74,6 +74,8 @@ Non-builtin modules are stored in a separate repository at
 https://github.com/edenhill/mklove-modules and are downloaded automatically
 when required.
 
+See `mklove/modules` for the builtin modules.
+
 
 Instructions
 ------------
@@ -95,4 +97,3 @@ emacs configure.myproject
 
 
 
-See `mklove/modules` for a builtin modules providing options and checks.
