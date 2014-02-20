@@ -21,7 +21,8 @@ tie between the two and you can use whichever part you like, or both, or none
 
 
 
-Why mklove and not autoconf/automake:
+Why mklove and not autoconf/automake
+------------------------------------
  * I dont want my Makefiles or targets auto generated.
    Why? Because it's hard to debug and it's trivial to write proper targets
    manually. (mklove provides optional standard targets for common operations).
@@ -33,7 +34,8 @@ Why mklove and not autoconf/automake:
    have been true since 1970. "checking for size of char... 1 byte".
 
 
-Base design requirements for mklove:
+Base design requirements for mklove
+-----------------------------------
  * I want portability to be taken care of for me.
  * I want to understand the output files of configure:
     Makefile.config and config.h have no targets or logic, they only contain
@@ -49,19 +51,28 @@ Base design requirements for mklove:
  * Suggest to me what packages to install to fix a failure.
  * Be plug-in compatible with the beast.
 
-Hip features:
+Hip features
+------------
  * Colored output, find errors quickly.
  * `./configure --reconfigure` reruns configure with the same arguments
    as the last run.
  * Will download mklove modules if necessary.
 
-Checks produce the following output:
+
+Checks produce the following output
+-----------------------------------
  * Make variable with default value set to y or n, e.g:
    WITH_LIBFOO=y
  * Config define with default value set to 1 or 0
    WITH_LIBFOO=1
 
 
+Modules
+-------
+
+Non-builtin modules are stored in a separate repository at
+https://github.com/edenhill/mklove-modules and are downloaded automatically
+when required.
 
 
 Instructions
