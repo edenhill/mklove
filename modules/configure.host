@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Host platform support
+# Sets:
+#  HOSTPFX
+
+mkl_option "Cross-compilation" "mk:HOSTPFX" "--host=HOSTPFX" "Host toolchain prefix"
+
+mkl_option "Cross-compilation" "mk:HOST_OS" "--host-os=osname" "Host OS (linux,osx,cygwin,..)"
+
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Build OS: Cygwin support
+#
+
+mkl_require cc
+
+
+
+

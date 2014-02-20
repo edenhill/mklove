@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Build OS: MacOSX support
+#
+
+mkl_require cc
+
+for n in CPPFLAGS LDFLAGS ; do
+    mkl_mkvar_append $n $n "-fPIC"
+done
+
+mkl_mkvar_append LIB_LDFLAGS LIB_LDFLAGS "-dynamiclib -shared"
+mkl_mkvar_append LIB_LDFLAGS LIB_LDFLAGS '-Wl,-install_name,$(DESTDIR)$(libdir)/$(LIBNAME).so.$(LIBVER)'
