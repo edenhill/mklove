@@ -857,7 +857,10 @@ source: $6"
         local ret=0
     fi
 
-    rm -f $srcfile*
+    # OSX XCode toolchain creates dSYM directories when -g set set,
+    # delete them specifically.
+    rm -rf "$srcfile" "$srcfile*dSYM"
+
     return $ret
 }
 
