@@ -1,16 +1,17 @@
 #!/bin/bash
 #
 
-
 # Load base module
 source mklove/modules/configure.base
 
 # Read some special command line options right away that must be known prior to
 # sourcing modules.
-mkl_in_list "$*" "--disable-downloads" && MKL_NO_DOWNLOAD=1
+mkl_in_list "$*" "--no-download" && MKL_NO_DOWNLOAD=1
+# Disable downloads when --help is used to avoid blocking calls.
+mkl_in_list "$*" "--help" && MKL_NO_DOWNLOAD=1
 mkl_in_list "$*" "--debug" && MKL_DEBUG=1
 
-# Create temporary Makefile and header files
+# Delete temporary Makefile and header files on exit.
 trap "{ rm -f $MKL_OUTMK $MKL_OUTH; }" EXIT
 
 
@@ -19,8 +20,8 @@ trap "{ rm -f $MKL_OUTMK $MKL_OUTH; }" EXIT
 ## Load builtin modules
 ##
 
-# Build OS detection
-mkl_require build_os
+# Builtin options, etc.
+mkl_require builtin
 
 # Host/target support
 mkl_require host
@@ -28,9 +29,14 @@ mkl_require host
 # Compiler detection
 mkl_require cc
 
-# Load application provided modules, if any.
+
+# Load application provided modules (in current directory), if any.
 for fname in configure.* ; do
-    # Skip base module and temporary files
+    if [[ $fname = 'configure.*' ]]; then
+        continue
+    fi
+
+    # Skip temporary files
     if [[ $fname = *~ ]]; then
         continue
     fi
@@ -60,21 +66,32 @@ while [[ ! -z $@ ]]; do
     if [[ $opt = *=* ]]; then
         name="${opt%=*}"
         arg="${opt#*=}"
+        eqarg=1
     else
         name="$opt"
         arg=""
+        eqarg=0
+    fi
+
+    safeopt="$(mkl_env_esc $name)"
+
+    if ! mkl_func_exists opt_$safeopt ; then
+        mkl_err "Unknown option $opt"
+        mkl_usage
+        exit 1
     fi
 
     # Check if this option needs an argument.
     reqarg=$(mkl_meta_get "MKL_OPT_ARGS" "$(mkl_env_esc $name)")
     if [[ ! -z $reqarg ]]; then
-        if [[ -z $arg ]]; then
+        if [[ $eqarg == 0 && -z $arg ]]; then
             arg=$1
             shift
-        fi
-        if [[ -z $arg ]]; then
-            mkl_err "Missing argument to option --$name=$reqarg"
-            exit 1
+
+            if [[ -z $arg ]]; then
+                mkl_err "Missing argument to option --$name $reqarg"
+                exit 1
+            fi
         fi
     else
         if [[ ! -z $arg ]]; then
@@ -116,18 +133,29 @@ while [[ ! -z $@ ]]; do
             exit 0
             ;;
 
+        update-modules)
+            fails=0
+            echo "Updating modules"
+            for mod in $MKL_MODULES ; do
+                echo -n "Updating $mod..."
+                if mkl_module_download "$mod" > /dev/null ; then
+                    echo -e "${MKL_GREEN}ok${MKL_CLR_RESET}"
+                else
+                    echo -e "${MKL_RED}failed${MKL_CLR_RESET}"
+                    fails=$(expr $fails + 1)
+                fi
+            done
+            exit $fails
+            ;;
+
         help)
             mkl_usage
             exit 0
             ;;
 
         *)
-            if ! mkl_func_exists opt_$name ; then
-                mkl_err "Unknown option $opt"
-                mkl_usage
-                exit 1
-            fi
-            opt_$name $name $arg || exit 1
+            opt_$safeopt $arg || exit 1
+            mkl_var_append MKL_OPTS_SET "$safeopt"
             ;;
     esac
 done
@@ -137,12 +165,12 @@ if [[ ! -z $MKL_CLEAN ]]; then
     exit 0
 fi
 
-# Remove previous log file
-rm -f $MKL_OUTDBG
+# Move away previous log file
+[[ -f $MKL_OUTDBG ]] && mv $MKL_OUTDBG ${MKL_OUTDBG}.old
 
 
 # Create output files
-echo "# configure exec: $0 $*" > $MKL_OUTDBG
+echo "# configure exec: $0 $*" >> $MKL_OUTDBG
 echo "# On $(date)" >> $MKL_OUTDBG
 
 rm -f $MKL_OUTMK $MKL_OUTH

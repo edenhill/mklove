@@ -9,36 +9,35 @@ mkl_require host
 
 function checks {
 
-    local HOSTPFX=$(mkl_mkvar_get HOSTPFX)
     # C compiler
     mkl_meta_set "ccenv" "name" "C compiler from CC env"
-    if ! mkl_command_check "ccenv" "WITH_CC" cont "${HOSTPFX}$CC --version"; then
-        if mkl_command_check "gcc" "WITH_GCC" cont "${HOSTPFX}gcc --version"; then
+    if ! mkl_command_check "ccenv" "WITH_CC" cont "$CC --version"; then
+        if mkl_command_check "gcc" "WITH_GCC" cont "gcc --version"; then
             CC=gcc
-        elif mkl_command_check "clang" "WITH_CLANG" cont "${HOSTPFX}clang --version"; then
+        elif mkl_command_check "clang" "WITH_CLANG" cont "clang --version"; then
             CC=clang
-        elif mkl_command_check "cc" "WITH_CC" fail "${HOSTPFX}cc --version"; then
+        elif mkl_command_check "cc" "WITH_CC" fail "cc --version"; then
             CC=cc
         fi
     fi
-    export CC="${HOSTPFX}${CC}"
+    export CC="${CC}"
     mkl_mkvar_set CC CC "$CC"
 
     # C++ compiler
     mkl_meta_set "cxxenv" "name" "C++ compiler from CXX env"
-    if ! mkl_command_check "cxxenv" "WITH_CXX" cont "${HOSTPFX}$CXX --version" ; then
+    if ! mkl_command_check "cxxenv" "WITH_CXX" cont "$CXX --version" ; then
         mkl_meta_set "gxx" "name" "C++ compiler (g++)"
         mkl_meta_set "clangxx" "name" "C++ compiler (clang++)"
         mkl_meta_set "cxx" "name" "C++ compiler (c++)"
-        if mkl_command_check "gxx" "WITH_GCCXX" cont "${HOSTPFX}g++ --version"; then
+        if mkl_command_check "gxx" "WITH_GXX" cont "g++ --version"; then
             CXX=g++
-        elif mkl_command_check "clangxx" "WITH_CLANGXX" cont "${HOSTPFX}clang++ --version"; then
+        elif mkl_command_check "clangxx" "WITH_CLANGXX" cont "clang++ --version"; then
             CXX=clang++
-        elif mkl_command_check "cxx" "WITH_CCXX" fail "${HOSTPFX}cc++ --version"; then
+        elif mkl_command_check "cxx" "WITH_CXX" fail "c++ --version"; then
             CXX=c++
         fi
     fi
-    export CXX="${HOSTPFX}${CXX}"
+    export CXX="${CXX}"
     mkl_mkvar_set "CXX" CXX $CXX
 
     # Provide prefix and checks for various other build tools.
@@ -49,8 +48,8 @@ function checks {
 
         [[ -z ${!tenv} ]] && mkl_env_set "$tenv" "$t"
 
-        if mkl_command_check "$t" "" fail "${HOSTPFX}${!tenv} --version" ; then
-            export "$tenv"="${HOSTPFX}${!tenv}"
+        if mkl_command_check "$t" "" fail "${!tenv} --version" ; then
+            export "$tenv"="${!tenv}"
             mkl_mkvar_set $tenv $tenv "${!tenv}"
         fi
     done
@@ -74,7 +73,7 @@ function checks {
     fi
     mkl_mkvar_set "pkgconfig" PKG_CONFIG $PKG_CONFIG
 
-    [[ ! -z "$PKG_CONFIG_PATH" ]] && mkl_env_append "$PKG_CONFIG_PATH"
+    [[ ! -z "$PKG_CONFIG_PATH" ]] && mkl_env_append PKG_CONFIG_PATH "$PKG_CONFIG_PATH"
 
     # install
     if [ -z "$INSTALL" ]; then
@@ -90,7 +89,7 @@ function checks {
 
 mkl_option "Compiler" "env:CC" "--cc=CC" "Build using C compiler CC" "\$CC"
 mkl_option "Compiler" "env:CXX" "--cxx=CXX" "Build using C++ compiler CXX" "\$CXX"
-mkl_option "Compiler" "ARCH" "--cc=ARCH" "Build for architecture" "$(uname -m)"
+mkl_option "Compiler" "ARCH" "--arch=ARCH" "Build for architecture" "$(uname -m)"
 mkl_option "Compiler" "CPU" "--cpu=CPU" "Build and optimize for specific CPU" "generic"
 
 
@@ -104,8 +103,7 @@ mkl_option "Compiler" "WITH_PROFILING" "--enable-profiling" "Enable profiling"
 function opt_enable-profiling {
     if [[ $2 == "y" ]]; then
         mkl_allvar_set "" "WITH_PROFILING" "y"
-        mkl_mkvar_append CFLAGS CFLAGS     "-pg"
-        mkl_mkvar_append CXXFLAGS CXXFLAGS "-pg"
+        mkl_mkvar_append CPPFLAGS CPPFLAGS "-pg"
         mkl_mkvar_append LDFLAGS LDFLAGS   "-pg"
     fi
 }

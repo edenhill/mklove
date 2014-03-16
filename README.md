@@ -70,29 +70,47 @@ Checks produce the following output
 Modules
 -------
 
-Non-builtin modules are stored in a separate repository at
-https://github.com/edenhill/mklove-modules and are downloaded automatically
-when required.
+Missing modules are downloaded automatically when required.
 
-See `mklove/modules` for the builtin modules.
+See `mklove/modules` for the available modules.
 
 
 Instructions
 ------------
 
+Run the `setup.sh` script from the mklove checkout directory
+(not from your project's mklove directory).
+Specify your project's top level directory as the only argument to setup.sh:
+
 ````
-# Copy the mklove directory to your projects top directory:
-cd myproject
-cp -r ...../mklove .
+# Go to mklove checkout directory
+cd mklove
 
-# Move configure base script
-mv mklove/configure .
+# Run setup, specify the path to your project
+./setup.sh ~/src/myproject
 
-# Add your own options and checks by creating a configure.<projname> file:
+# Answer the questions and let mklove set up itself.
+
+# Go to your project directory
+cd ~/src/myproject
+
+# Add your own options and checks by creating a configure.<projname> file.
 emacs configure.myproject
 
-# Run
+# Update modules.
+# This copies the required modules to your project's mklove/modules directory
+# so that your project can be packaged and shipped with all required
+# mklove files.
+# Note: --update-modules will overwrite modules in <proj>/mklove.
+./configure --update-modules
+
+
+# Configure your project
 ./configure
+
+# Build it
+make (or whatever)
+
 ````
 
 
