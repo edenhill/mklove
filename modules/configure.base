@@ -747,7 +747,7 @@ function mkl_meta_get {
 # variables itself (which is not recommended, but desired sometimes).
 #
 # Arguments:
-#  [ --verb "verb.." ]  (replace "checking for ")
+#  [ --verb "verb.." ]  (replace "checking for")
 #  config name
 #  define name
 #  action  (fail,cont,disable or no-cache)
@@ -981,6 +981,31 @@ $out"
 
     return 0
 }
+
+
+# Check that a program is executable, but will not execute it.
+# Arguments:
+#  config name
+#  define name (optional, can be empty)
+#  action
+#  program name  (e.g, objdump)
+function mkl_prog_check {
+    mkl_check_begin --verb "checking executable" "$1" "$2" "$3" "$1" && return $?
+
+    local out=
+    out=$(command -v "$4" 2>&1)
+    if [[ $? != 0 ]]; then
+        mkl_dbg "$1: $2: $4 is not executable: $out"
+        mkl_check_failed "$1" "$2" "$3" "$4 is not executable"
+        return 1
+    fi
+
+    mkl_check_done "$1" "$2" "$3" "ok"
+
+    return 0
+}
+
+
 
 
 # Checks that the check for the given config name passed.
