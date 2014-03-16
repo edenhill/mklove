@@ -972,7 +972,8 @@ function mkl_command_check {
     out=$($4 2>&1)
     if [[ $? != 0 ]]; then
         mkl_dbg "$1: $2: $4 failed: $out"
-        mkl_check_failed "$1" "$2" "$3" "command '$4' failed"
+        mkl_check_failed "$1" "$2" "$3" "command '$4' failed:
+$out"
         return 1
     fi
 
