@@ -106,7 +106,6 @@ mkdir -p "$proj_dir/mklove/modules" || fatal "Failed to create directory"
 if [[ $inst_conf == y ]]; then
     cp -v "$mklove_dir/configure" "$proj_dir/" || fatal "Copy failure"
     cp -v "$mklove_dir/modules/configure.base" "$proj_dir/mklove/modules" || fatal "Copy failure"
-    cp -v $mklove_dir/modules/configure.host_* "$proj_dir/mklove/modules" || fatal "Copy failure"
 
     # Let configure resolve initial dependencies
     puts ""
