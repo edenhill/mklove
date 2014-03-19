@@ -637,6 +637,17 @@ function mkl_def {
 }
 
 
+# Render a string (e.g., evaluate its $varrefs)
+# Arguments:
+#  string
+function mkl_render {
+    if [[ $* == *\$* ]]; then
+        eval "echo $*"
+    else
+        echo "$*"
+    fi
+}
+
 # Escape a string so that it becomes suitable for being an env variable.
 # This is a destructive operation and the original string cannot be restored.
 function mkl_env_esc {
@@ -1392,7 +1403,7 @@ function mkl_option {
         if [[ $optval = "PATH" ]]; then
         # PATH argument: make it an absolute path.
         # Only set the make variable (not config.h)
-            eval "function opt_$safeopt { $setmkvar $varname \"\$(mkl_abspath \$1)\"; }"
+            eval "function opt_$safeopt { $setmkvar $varname \"\$(mkl_abspath \$(mkl_render \$1))\"; }"
         else
         # Standard argument: simply set the value
             if [[ -z "$6" ]]; then
