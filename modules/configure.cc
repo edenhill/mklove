@@ -95,6 +95,14 @@ function checks {
         mkl_mkvar_append CPPFLAGS CPPFLAGS "-pg"
         mkl_mkvar_append LDFLAGS LDFLAGS   "-pg"
     fi
+
+    # Optimization
+    if [[ $WITHOUT_OPTIMIZATION == n ]]; then
+        mkl_mkvar_append CPPFLAGS CPPFLAGS "-O2"
+    else
+        mkl_mkvar_append CPPFLAGS CPPFLAGS "-O0"
+    fi
+
 }
 
 
@@ -111,3 +119,5 @@ done
 mkl_option "Compiler" "env:PKG_CONFIG_PATH" "--pkg-config-path" "Extra paths for pkg-config"
 
 mkl_option "Compiler" "WITH_PROFILING" "--enable-profiling" "Enable profiling"
+
+mkl_option "Compiler" "WITHOUT_OPTIMIZATION" "--disable-optimization" "Disable optimization flag to compiler" "n"
