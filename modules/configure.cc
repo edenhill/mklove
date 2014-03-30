@@ -23,22 +23,24 @@ function checks {
     export CC="${CC}"
     mkl_mkvar_set CC CC "$CC"
 
+    if [[ $MKL_CC_WANT_CXX == 1 ]]; then
     # C++ compiler
-    mkl_meta_set "cxxenv" "name" "C++ compiler from CXX env"
-    if ! mkl_command_check "cxxenv" "WITH_CXX" cont "$CXX --version" ; then
-        mkl_meta_set "gxx" "name" "C++ compiler (g++)"
-        mkl_meta_set "clangxx" "name" "C++ compiler (clang++)"
-        mkl_meta_set "cxx" "name" "C++ compiler (c++)"
-        if mkl_command_check "gxx" "WITH_GXX" cont "g++ --version"; then
-            CXX=g++
-        elif mkl_command_check "clangxx" "WITH_CLANGXX" cont "clang++ --version"; then
-            CXX=clang++
-        elif mkl_command_check "cxx" "WITH_CXX" fail "c++ --version"; then
-            CXX=c++
+        mkl_meta_set "cxxenv" "name" "C++ compiler from CXX env"
+        if ! mkl_command_check "cxxenv" "WITH_CXX" cont "$CXX --version" ; then
+            mkl_meta_set "gxx" "name" "C++ compiler (g++)"
+            mkl_meta_set "clangxx" "name" "C++ compiler (clang++)"
+            mkl_meta_set "cxx" "name" "C++ compiler (c++)"
+            if mkl_command_check "gxx" "WITH_GXX" cont "g++ --version"; then
+                CXX=g++
+            elif mkl_command_check "clangxx" "WITH_CLANGXX" cont "clang++ --version"; then
+                CXX=clang++
+            elif mkl_command_check "cxx" "WITH_CXX" fail "c++ --version"; then
+                CXX=c++
+            fi
         fi
+        export CXX="${CXX}"
+        mkl_mkvar_set "CXX" CXX $CXX
     fi
-    export CXX="${CXX}"
-    mkl_mkvar_set "CXX" CXX $CXX
 
     # Provide prefix and checks for various other build tools.
     local t=
