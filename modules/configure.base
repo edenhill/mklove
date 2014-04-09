@@ -556,7 +556,7 @@ function mkl_err {
 # Argument:
 #  string ..
 function mkl_err0 {
-    echo "$*" 1>&2
+    echo -e "$*" 1>&2
     echo "$*" >> $MKL_OUTDBG
 }
 
