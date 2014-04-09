@@ -8,11 +8,6 @@ MKL_YELLOW="\033[033m"
 MKL_BLUE="\033[034m"
 MKL_CLR_RESET="\033[0m"
 
-
-mklove_dir=$(pwd)
-proj_dir=$1
-
-
 function puts {
     echo -e "$*"
 }
@@ -22,6 +17,37 @@ function fatal {
     exit 1
 }
 
+interactive=1
+inst_conf=n
+inst_mkb=n
+
+while true ; do
+    case "$1" in
+        --all)
+            inst_conf=y
+            inst_mkb=y
+            interactive=0
+            ;;
+        --mk)
+            inst_mkb=y
+            interactive=0
+            ;;
+        --conf)
+            inst_conf=y
+            interactive=0
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+mklove_dir=$(pwd)
+proj_dir=$1
+
+
+
 
 #
 # Check usage
@@ -30,7 +56,12 @@ if [[ ! -d $proj_dir ]]; then
     puts "mklove setup.sh"
     puts "Interactive utility for setting up mklove for your project"
     puts ""
-    puts "Usage: ./setup.sh <your-project-directory>"
+    puts "Usage: ./setup.sh [options] <your-project-directory>"
+    puts ""
+    puts "Options:"
+    puts "  --all    Set up both configure and Makefile.base"
+    puts "  --mk     Set up Makefile.base"
+    puts "  --conf   Set up configure"
     exit 1
 fi
 
@@ -56,9 +87,7 @@ fi
 #
 # Ask what parts of mklove are to be set up.
 #
-inst_conf=n
-inst_mkb=n
-while true ; do
+while [[ $interactive == 1 ]] ; do
     puts "${MKL_BLUE}What parts of mklove do you want to use in your project:${MKL_CLR_RESET}"
     puts " 1 - configure and Makefile.base"
     puts " 2 - configure only"
@@ -96,7 +125,8 @@ puts "${MKL_BLUE}Will set up your project with:${MKL_CLR_RESET}"
 puts " - from mklove directory $mklove_dir"
 puts " - to project directory $proj_dir"
 
-read -p "Press enter to confirm or Ctrl-C to abort"
+[[ $interactive == 1 ]] && read -p "Press enter to confirm or Ctrl-C to abort"
+
 
 puts ""
 puts "${MKL_BLUE}Creating $proj_dir/mklove/modules and copying files${MKL_CLR_RESET}"
