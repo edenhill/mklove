@@ -752,6 +752,20 @@ function mkl_meta_get {
     fi
 }
 
+# Checks if metadata exists
+# Arguments:
+#   config name
+#   metadata key
+function mkl_meta_exists {
+    local metaname="mkl__$1__$2"
+    if [[ ! -z ${!metaname} ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+
 
 
 
