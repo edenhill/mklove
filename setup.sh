@@ -8,6 +8,9 @@ MKL_YELLOW="\033[033m"
 MKL_BLUE="\033[034m"
 MKL_CLR_RESET="\033[0m"
 
+# Set to "-v" for verbose file copies
+CP_V=
+
 function puts {
     echo -e "$*"
 }
@@ -134,8 +137,8 @@ puts "${MKL_BLUE}Creating $proj_dir/mklove/modules and copying files${MKL_CLR_RE
 mkdir -p "$proj_dir/mklove/modules" || fatal "Failed to create directory"
 
 if [[ $inst_conf == y ]]; then
-    cp -v "$mklove_dir/configure" "$proj_dir/" || fatal "Copy failure"
-    cp -v "$mklove_dir/modules/configure.base" "$proj_dir/mklove/modules" || fatal "Copy failure"
+    cp $CP_V "$mklove_dir/configure" "$proj_dir/" || fatal "Copy failure"
+    cp $CP_V "$mklove_dir/modules/configure.base" "$proj_dir/mklove/modules" || fatal "Copy failure"
 
     # Let configure resolve initial dependencies
     puts ""
@@ -144,7 +147,7 @@ if [[ $inst_conf == y ]]; then
 fi
 
 if [[ $inst_mkb == y ]]; then
-    cp -v "$mklove_dir/Makefile.base" "$proj_dir/mklove/" || fatal "Copy failure"
+    cp $CP_V "$mklove_dir/Makefile.base" "$proj_dir/mklove/" || fatal "Copy failure"
 fi
 
 
