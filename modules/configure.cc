@@ -64,6 +64,7 @@ function checks {
     [[ ! -z $CPPFLAGS ]] && mkl_mkvar_append "CPPFLAGS" "CPPFLAGS" $CPPFLAGS
     [[ ! -z $CXXFLAGS ]] && mkl_mkvar_append "CFLAGS" "CXXFLAGS" $CXXFLAGS
     [[ ! -z $LDFLAGS ]]  && mkl_mkvar_append "CFLAGS" "LDFLAGS" $LDFLAGS
+    [[ ! -z $ARFLAGS ]]  && mkl_mkvar_set "ARFLAGS" "ARFLAGS" "$ARFLAGS"
 
     mkl_mkvar_append CPPFLAGS CPPFLAGS "-g"
 
@@ -128,8 +129,8 @@ mkl_option "Compiler" "env:CXX" "--cxx=CXX" "Build using C++ compiler CXX" "\$CX
 mkl_option "Compiler" "ARCH" "--arch=ARCH" "Build for architecture" "$(uname -m)"
 mkl_option "Compiler" "CPU" "--cpu=CPU" "Build and optimize for specific CPU" "generic"
 
+for n in CFLAGS CPPFLAGS CXXFLAGS LDFLAGS ARFLAGS; do
 
-for n in CFLAGS CPPFLAGS CXXFLAGS LDFLAGS; do
     mkl_option "Compiler" "mk:$n" "--$n=$n" "Add $n flags"
 done
 
