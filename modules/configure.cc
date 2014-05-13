@@ -103,6 +103,8 @@ function checks {
 	    else
 		INSTALL=install
 	    fi
+        else
+            INSTALL=install
 	fi
     fi
 
