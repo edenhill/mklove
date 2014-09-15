@@ -1525,7 +1525,7 @@ function mkl_toggle_option {
     # Add corresponding "--disable-foo" option for "--enable-foo".
     local disname="${3/--enable/--disable}"
     local dishelp="${4/Enable/Disable}"
-    mkl_option "$1" "$2" "$disname" "$dishelp"
+    mkl_option "$1" "$2" "$disname" "$dishelp" "" "n"
 }
 
 # Adds a toggle (--enable-X, --disable-X) option with builtin checker.
