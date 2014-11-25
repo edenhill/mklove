@@ -3,8 +3,7 @@
 # Reads version from file and sets variables accordingly
 # The first non-commented line in the file is expected to be the version string.
 # Arguments:
-#  {  "from" "text-file" filename |
-#     "from "header" filename "define" define-name }
+#    filename
 #    STR_VERSION_VARIABLE_NAME
 #  [ HEX_VERSION_VARIABLE_NAME ]
 #
