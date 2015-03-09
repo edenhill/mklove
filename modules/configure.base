@@ -1126,6 +1126,29 @@ function mkl_config_check {
 }
 
 
+# Checks that all provided config names are set.
+# Arguments:
+#  config name
+#  define name
+#  action
+#  check_config_name1
+#  check_config_name2..
+function mkl_config_check_all {
+    local cname=
+    local res="ok"
+    echo start this now for $1
+    for cname in ${@:4}; do
+        local st=$(mkl_var_get "MKL_STATUS_$cname")
+        [[ $status = "ok" ]] && continue
+        mkl_fail $1 $2 $3 "depends on $cname"
+        res="failed"
+    done
+
+    echo "try res $res"
+    mkl_check_done "$1" "$2" "$3" $res
+}
+
+
 # Check environment variable
 # Arguments:
 #  config name
