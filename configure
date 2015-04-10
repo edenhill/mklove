@@ -108,7 +108,7 @@ while [[ ! -z $@ ]]; do
             oldcmd=$(grep '^# configure exec: ' config.log | \
                 sed -e 's/^\# configure exec: //')
             if [[ -z $oldcmd ]]; then
-                echo "No previous execution found in config.log"
+                mkl_err "No previous execution found in config.log"
                 exit 1
             fi
             echo "Reconfiguring: $oldcmd"
