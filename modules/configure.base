@@ -435,11 +435,11 @@ function mkl_generate {
     mkl_write_mk ""
 
     # Export colors to Makefile.config
-    mkl_write_mk "MKL_RED=\t\"${MKL_RED}\""
-    mkl_write_mk "MKL_GREEN=\t\"${MKL_GREEN}\""
-    mkl_write_mk "MKL_YELLOW=\t\"${MKL_YELLOW}\""
-    mkl_write_mk "MKL_BLUE=\t\"${MKL_BLUE}\""
-    mkl_write_mk "MKL_CLR_RESET=\t\"${MKL_CLR_RESET}\""
+    mkl_write_mk "MKL_RED=\t${MKL_RED}"
+    mkl_write_mk "MKL_GREEN=\t${MKL_GREEN}"
+    mkl_write_mk "MKL_YELLOW=\t${MKL_YELLOW}"
+    mkl_write_mk "MKL_BLUE=\t${MKL_BLUE}"
+    mkl_write_mk "MKL_CLR_RESET=\t${MKL_CLR_RESET}"
 
     local n=
     for n in $MKL_MKVARS ; do
