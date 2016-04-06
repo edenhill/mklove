@@ -851,7 +851,9 @@ function mkl_check_begin {
 #  status (ok|failed)
 #  extra-info (optional)
 function mkl_check_done {
-    mkl_var_set "MKL_STATUS_$1" "$4" cache
+    # Clean up configname to be a safe varname
+    local cname=${1//-/_}
+    mkl_var_set "MKL_STATUS_$cname" "$4" cache
 
     local extra=""
     if [[ $4 = "failed" ]]; then
@@ -867,8 +869,8 @@ function mkl_check_done {
         esac
         echo -e " $clr$4$MKL_CLR_RESET${extra}"
     else
-        [[ ! -z $2 ]] && mkl_define_set "$1" "$2" "1"
-        [[ ! -z $2 ]] && mkl_mkvar_set  "$1" "$2" "y"
+        [[ ! -z $2 ]] && mkl_define_set "$cname" "$2" "1"
+        [[ ! -z $2 ]] && mkl_mkvar_set  "$cname" "$2" "y"
         [ ! -z "$5" ] && extra=" ($5)"
         echo -e " $MKL_GREEN$4${MKL_CLR_RESET}$extra"
     fi
