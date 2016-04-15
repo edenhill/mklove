@@ -133,17 +133,17 @@ $(BIN): $(OBJS)
 
 file-check:
 	@printf "$(MKL_YELLOW)Checking $(LIBNAME) integrity$(MKL_CLR_RESET)\n"
-	@RET=true ; \
+	@RET=0 ; \
 	for f in $(CHECK_FILES) ; do \
 		printf "%-30s " $$f ; \
 		if [ -f "$$f" ]; then \
 			printf "$(MKL_GREEN)OK$(MKL_CLR_RESET)\n" ; \
 		else \
 			printf "$(MKL_RED)MISSING$(MKL_CLR_RESET)\n" ; \
-			RET=false ; \
+			RET=1 ; \
 		fi ; \
 	done ; \
-	$$RET
+	exit $$RET
 
 
 lib-install:

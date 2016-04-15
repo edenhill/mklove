@@ -3,9 +3,8 @@
 
 BASHVER=$(expr ${BASH_VERSINFO[0]} \* 1000 + ${BASH_VERSINFO[1]})
 
-if [ "$BASHVER" -lt 3002 ]; then
-    echo "ERROR: mklove requires bash version 3.2 or later but you are using $BASH_VERSION ($BASHVER)"
-    echo "       See https://github.com/edenhill/mklove/issues/15"
+if [ "$BASHVER" -lt 3000 ]; then
+    echo "ERROR: mklove requires bash version 3.0 or later but you are using $BASH_VERSION ($BASHVER)"
     exit 1
 fi
 
