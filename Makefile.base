@@ -34,7 +34,11 @@ else
 	LIBFILENAMELINK=$(LIBNAME).so
 endif
 
-INSTALL?=		install
+ifeq ((_UNAME_S),SunOs)
+	INSTALL?= /usr/ucb/install
+else
+	INSTALL?= install
+endif
 INSTALL_PROGRAM?=	$(INSTALL)
 INSTALL_DATA?=		$(INSTALL) -m 644
 
