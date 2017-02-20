@@ -4,7 +4,8 @@ mklove - not autoconf
 mklove provides an auto-configuration and build environment for C/C++
 applications and libraries.
 
-It aims to be a lightweight alternative to the overly bloated autoconf.
+It aims to be a lightweight drop-in compatible replacement to
+the overly bloated autoconf.
 
 mklove has two prongs on its fork:
  * the configure script, and
@@ -15,9 +16,6 @@ standard Makefile variable names in Makefile.config, while Makefile.base
 uses these standard names. Other than that there is no special magic
 tie between the two and you can use whichever part you like, or both, or none
 (which seems pointless).
-
-
-**NOTE**: mklove is work in progress
 
 
 
