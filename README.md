@@ -17,7 +17,12 @@ uses these standard names. Other than that there is no special magic
 tie between the two and you can use whichever part you like, or both, or none
 (which seems pointless).
 
-
+mklove is used in popular open source projects and works with Debian's debhelper
+based autoconf package builders out of the box. See the following real-life uses
+for inspiration:
+ * [librdkafka](https://github.com/edenhill/librdkafka) - [configure.librdkafka](https://github.com/edenhill/librdkafka/blob/master/configure.librdkafka)
+ * [kafkacat](https://github.com/edenhill/kafkacat) - [configure.kafkacat](https://github.com/edenhill/kafkacat/blob/master/configure.kafkacat)
+ 
 
 Why mklove and not autoconf/automake
 ------------------------------------
