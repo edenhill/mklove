@@ -205,7 +205,7 @@ function mkl_mkvar_append {
 #  config name
 #  variable name
 #  value
-function mkl_mkvar_append {
+function mkl_mkvar_prepend {
     if [[ ! -z $2 ]]; then
         mkl_env_prepend "$2" "$3"
         mkl_in_list "$MKL_MKVARS" "$2"|| mkl_env_append MKL_MKVARS $2
