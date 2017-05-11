@@ -1025,6 +1025,73 @@ function mkl_lib_check_static {
 }
 
 
+# Uncompress program that accepts file $1
+function mkl_uncompress_pipe {
+    case "$1" in
+        *.tar.xz       ) echo -n "tar xJp";;
+        *.tar.gz|*.tgz ) echo -n "tar xzp";;
+        *.tar.bz2      ) echo -n "tar xjp";;
+        *.zip          ) echo -n "bsdtar -xf-";;
+        *              ) ;;
+    esac
+}
+
+
+# Download & compile dependency on a dependency folder
+# Arguments:
+#   config name
+#   define name
+#   action (fail|disable|cont)
+function mkl_lib_bootstrap {
+    local dep_path="vendor/$1"
+    local bootstrap_url=$(mkl_meta_get $1 bootstrap_url)
+    if [[ ! -d $dep_path ]]; then
+        mkl_info "Downloading missing dep $1 from [$bootstrap_url]"
+        mkdir -p $dep_path
+        pushd $dep_path &> /dev/null
+
+        local uncompress_pipe=$(mkl_uncompress_pipe "$bootstrap_url")
+
+        local wget_output
+        if [[ "x$uncompress_pipe" == "x" ]]; then
+            wget_output=$(wget -q "$bootstrap_url")
+        else
+            wget_output=$(wget -q -O - "$bootstrap_url" | $uncompress_pipe)
+        fi
+
+        local wget_ret=$?
+        if [[ $wget_ret != 0 ]]; then
+            mkl_check_failed "$1" "$2" "$3" "couldn't get sources: $wget_output"
+            return $wget_ret
+        fi
+    else
+        mkl_info "Using previously downloaded $1 from [$bootstrap_url]"
+        pushd $dep_path &> /dev/null
+    fi
+
+    mkl_info "Creating dep $1 in [$dep_path]"
+
+    if mkl_func_exists $(mkl_meta_get $1 bootstrap_makefn); then
+        local readonly CPPFLAGS_BAK="$(mkl_mkvar_get CPPFLAGS)"
+        mkl_mkvar_set CPPFLAGS CPPFLAGS "$CPPFLAGS_BAK $(mkl_meta_get $1 bootstrap_cppflags)"
+
+        # filter vendor-specific libraries
+        local makefn_output=$(CPPFLAGS="" LIBS="" $(mkl_meta_get $1 bootstrap_makefn))
+        local make_rc=$?
+
+        if [[ $make_rc != 0 ]]; then
+            # Fail and restore CPPFLAGS
+            mkl_check_failed "$1" "$2" "$3" "couldn't make source: makefn_output"
+            mkl_mkvar_set CPPFLAGS CPPFLAGS "$CPPFLAGS_BAK"
+            return $make_rc
+        fi
+    fi
+
+    popd &> /dev/null
+    return 0
+}
+
+
 # Checks that the specified lib is available through a number of methods.
 # compiler flags are automatically appended to "LIBS" mkvar on success.
 #
@@ -1061,7 +1128,40 @@ function mkl_lib_check {
 	is_static=1
     fi
 
-    if ! mkl_compile_check "$1" "$2" "$3" "$4" "$libs" "$6"; then
+    local do_bootstrap=n
+    if ([[ "x$MKL_BOOTSTRAP" == "xy" ]] && mkl_meta_exists "$1" bootstrap_url) ; then
+        do_bootstrap=y
+    fi
+
+    local action="$3"
+    if [[ "$action" == "fail" && "x$do_bootstrap" == "xy" ]]; then
+        # Continue for boostrap
+        action="cont"
+    fi
+
+    if ! mkl_compile_check "$1" "$2" "$action" "$4" "$libs" "$6"; then
+        # Compile did not succeed. Try automatic dependency download
+        if [[ "x$do_bootstrap" == "xy" ]]; then
+            MKL_BOOTSTRAP=n # Avoid infinite recursion
+            local readonly WITH_STATIC_LINKING_BAK="$WITH_STATIC_LINKING"
+            if mkl_meta_exists $1 bootstrap_static_lib; then
+                WITH_STATIC_LINKING=y
+                eval "STATIC_LIB_${staticopt#--static=-l}"=$(mkl_meta_get $1 bootstrap_static_lib)
+            fi
+
+            mkl_lib_bootstrap "$1" "$2" "$3"
+            mkl_lib_check $staticopt "$1" "$2" "$3" "$4" "$5" "$6"
+            local rc=$?
+
+            WITH_STATIC_LINKING="$WITH_STATIC_LINKING_BAK"
+            MKL_BOOTSTRAP=y
+
+            if [[ $rc != 0 ]]; then
+                # Boostrap also failed, nothing more to do
+                return $rc
+            fi
+        fi
+
         return 1
     fi
 
