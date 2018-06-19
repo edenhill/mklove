@@ -193,8 +193,9 @@ lib-uninstall:
 	rm -f $$DESTDIR$(libdir)/$(LIBFILENAME)
 	rm -f $$DESTDIR$(libdir)/$(LIBFILENAMELINK)
 	rmdir $$DESTDIR$(includedir)/$(PKGNAME) || true
-
-
+	rm -f $$DESTDIR$(pkgconfigdir)/$(LIBNAME0).pc
+	rm -f $$DESTDIR$(pkgconfigdir)/$(LIBNAME0)-static.pc
+	rmdir $$DESTDIR$(pkgconfigdir) || true
 
 bin-install:
 	@printf "$(MKL_YELLOW)Install $(BIN) to $$DESTDIR$(prefix)$(MKL_CLR_RESET)\n"
@@ -204,6 +205,7 @@ bin-install:
 bin-uninstall:
 	@printf "$(MKL_YELLOW)Uninstall $(BIN) from $$DESTDIR$(prefix)$(MKL_CLR_RESET)\n"
 	rm -f $$DESTDIR$(bindir)/$(BIN)
+	rmdir $$DESTDIR$(bindir) || true
 
 
 generic-clean:
