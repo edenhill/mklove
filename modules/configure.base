@@ -2045,7 +2045,7 @@ function mkl_module_load {
     mkl_dbg "Loading module $modname (required by $cmod) from $fname"
 
     # Source module file (positional arguments are available to module)
-    source $fname
+    source "$fname"
 
     # Restore current module (might be recursive)
     MKL_MODULE=$save_MKL_MODULE
