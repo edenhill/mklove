@@ -270,11 +270,17 @@ function mkl_define_set {
     fi
 
     # Define as code, string or integer?
+    # We need to put the regexes in variables, because starting with
+    # Bash 3.2, quoting the regex as in  [[ "$string" =~ '$regex' ]]
+    # forced string matching.  But prior to 3.2, bash would error out
+    # on unquoted regexes that contained special characters.
+    int_re='^[0-9]+([lL]?[lL][dDuU]?)?$'
+    hex_re='^0x[0-9a-fA-F]+([lL]?[lL][dDuU]?)?$'
+
     if [[ $val == code:* ]]; then
         # Code block, copy verbatim without quotes, strip code: prefix
         val=${val#code:}
-    elif [[ ! ( "$val" =~ ^[0-9]+([lL]?[lL][dDuU]?)?$ || \
-        "$val" =~ ^0x[0-9a-fA-F]+([lL]?[lL][dDuU]?)?$ ) ]]; then
+    elif [[ ! ( "$val" =~ $int_re || "$val" =~ $hex_re ) ]]; then
         # String: quote
         val="\"$val\""
     fi

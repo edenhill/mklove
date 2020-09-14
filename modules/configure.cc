@@ -114,7 +114,7 @@ function checks {
 	    if mkl_command_check ginstall "" ignore "ginstall --version"; then
 		INSTALL=ginstall
 	    else
-		INSTALL=install
+		INSTALL=/usr/ucb/install
 	    fi
         else
             INSTALL=install
