@@ -150,6 +150,7 @@ while [[ ! -z $@ ]]; do
             fails=0
             echo "Updating modules"
             for mod in $MKL_MODULES ; do
+                [[ $mod == "self" ]] && continue
                 echo -n "Updating $mod..."
                 if mkl_module_download "$mod" > /dev/null ; then
                     echo -e "${MKL_GREEN}ok${MKL_CLR_RESET}"
